@@ -1,118 +1,119 @@
-pc.extend(pc, function () {
+pc.extend(pc, function() {
     /**
-    * @name pc.Application
-    * @class Default application which performs general setup code and initiates the main game loop.
-    * @description Create a new Application.
-    * @param {Element} canvas The canvas element
-    * @param {Object} options
-    * @param {pc.Keyboard} [options.keyboard] Keyboard handler for input
-    * @param {pc.Mouse} [options.mouse] Mouse handler for input
-    * @param {pc.TouchDevice} [options.touch] TouchDevice handler for input
-    * @param {pc.GamePads} [options.gamepads] Gamepad handler for input
-    * @param {String} [options.scriptPrefix] Prefix to apply to script urls before loading
-    * @param {String} [options.assetPrefix] Prefix to apply to asset urls before loading
-    * @param {Object} [options.graphicsDeviceOptions] Options object that is passed into the {@link pc.GraphicsDevice} constructor
-    *
-    * @example
-    * // Create application
-    * var app = new pc.Application(canvas, options);
-    * // Start game loop
-    * app.start()
-    */
+     * @name pc.Application
+     * @class Default application which performs general setup code and initiates the main game loop.
+     * @description Create a new Application.
+     * @param {Element} canvas The canvas element
+     * @param {Object} options
+     * @param {pc.Keyboard} [options.keyboard] Keyboard handler for input
+     * @param {pc.Mouse} [options.mouse] Mouse handler for input
+     * @param {pc.TouchDevice} [options.touch] TouchDevice handler for input
+     * @param {pc.GamePads} [options.gamepads] Gamepad handler for input
+     * @param {String} [options.scriptPrefix] Prefix to apply to script urls before loading
+     * @param {String} [options.assetPrefix] Prefix to apply to asset urls before loading
+     * @param {Object} [options.graphicsDeviceOptions] Options object that is passed into the {@link pc.GraphicsDevice} constructor
+     *
+     * @example
+     * // Create application
+     * var app = new pc.Application(canvas, options);
+     * // Start game loop
+     * app.start()
+     */
 
     // PROPERTIES
 
     /**
-    * @name pc.Application#scene
-    * @type {pc.Scene}
-    * @description The current {@link pc.Scene}
-    */
+     * @name pc.Application#scene
+     * @type {pc.Scene}
+     * @description The current {@link pc.Scene}
+     */
 
     /**
-    * @name pc.Application#timeScale
-    * @type {Number}
-    * @description Scales the global time delta.
-    */
+     * @name pc.Application#timeScale
+     * @type {Number}
+     * @description Scales the global time delta.
+     */
 
     /**
-    * @name pc.Application#assets
-    * @type {pc.AssetRegistry}
-    * @description The assets available to the application.
-    */
+     * @name pc.Application#assets
+     * @type {pc.AssetRegistry}
+     * @description The assets available to the application.
+     */
 
     /**
-    * @name pc.Application#graphicsDevice
-    * @type {pc.GraphicsDevice}
-    * @description The graphics device used by the application.
-    */
+     * @name pc.Application#graphicsDevice
+     * @type {pc.GraphicsDevice}
+     * @description The graphics device used by the application.
+     */
 
     /**
-    * @name pc.Application#systems
-    * @type {pc.ComponentSystem[]}
-    * @description The component systems.
-    */
+     * @name pc.Application#systems
+     * @type {pc.ComponentSystem[]}
+     * @description The component systems.
+     */
 
     /**
-    * @name pc.Application#loader
-    * @type {pc.ResourceLoader}
-    * @description The resource loader.
-    */
+     * @name pc.Application#loader
+     * @type {pc.ResourceLoader}
+     * @description The resource loader.
+     */
 
     /**
-    * @name pc.Application#root
-    * @type {pc.Entity}
-    * @description The root {@link pc.Entity} of the application.
-    */
+     * @name pc.Application#root
+     * @type {pc.Entity}
+     * @description The root {@link pc.Entity} of the application.
+     */
 
     /**
-    * @name pc.Application#keyboard
-    * @type {pc.Keyboard}
-    * @description The keyboard device.
-    */
+     * @name pc.Application#keyboard
+     * @type {pc.Keyboard}
+     * @description The keyboard device.
+     */
 
     /**
-    * @name pc.Application#mouse
-    * @type {pc.Mouse}
-    * @description The mouse device.
-    */
+     * @name pc.Application#mouse
+     * @type {pc.Mouse}
+     * @description The mouse device.
+     */
 
     /**
-    * @name pc.Application#touch
-    * @type {pc.TouchDevice}
-    * @description Used to get touch events input.
-    */
+     * @name pc.Application#touch
+     * @type {pc.TouchDevice}
+     * @description Used to get touch events input.
+     */
 
     /**
-    * @name pc.Application#gamepads
-    * @type {pc.GamePads}
-    * @description Used to access GamePad input.
-    */
+     * @name pc.Application#gamepads
+     * @type {pc.GamePads}
+     * @description Used to access GamePad input.
+     */
 
     /**
-    * @name pc.Application#scripts
-    * @type pc.ScriptRegistry
-    * @description The Script Registry of the Application
-    */
+     * @name pc.Application#scripts
+     * @type pc.ScriptRegistry
+     * @description The Script Registry of the Application
+     */
 
     /**
-    * @name pc.Application#autoRender
-    * @type Boolean
-    * @description When true (the default) the application's render function is called every frame.
-    */
+     * @name pc.Application#autoRender
+     * @type Boolean
+     * @description When true (the default) the application's render function is called every frame.
+     */
 
     /**
-    * @name pc.Application#renderNextFrame
-    * @type Boolean
-    * @description If {@link pc.Application#autoRender} is false, set `app.renderNextFrame` true to force application to render the scene once next frame.
-    * @example
-    * // render the scene only while space key is pressed
-    * if (this.app.keyboard.isPressed(pc.KEY_SPACE)) {
-    *    this.app.renderNextFrame = true;
-    * }
-    */
+     * @name pc.Application#renderNextFrame
+     * @type Boolean
+     * @description If {@link pc.Application#autoRender} is false, set `app.renderNextFrame` true to force application to render the scene once next frame.
+     * @example
+     * // render the scene only while space key is pressed
+     * if (this.app.keyboard.isPressed(pc.KEY_SPACE)) {
+     *    this.app.renderNextFrame = true;
+     * }
+     */
 
-    var Application = function (canvas, options) {
+    var Application = function(canvas, options) {
         options = options || {};
+        this.customLoader = options.customLoader;
 
         // Open the log
         pc.log.open();
@@ -147,11 +148,11 @@ pc.extend(pc, function () {
         this.scene = new pc.Scene();
         this.root = new pc.Entity(this);
         this.root._enabledInHierarchy = true;
-        this._enableList = [ ];
+        this._enableList = [];
         this._enableList.size = 0;
         this.assets = new pc.AssetRegistry(this.loader);
         if (options.assetPrefix) this.assets.prefix = options.assetPrefix;
-        this.scriptsOrder = options.scriptsOrder || [ ];
+        this.scriptsOrder = options.scriptsOrder || [];
         this.scripts = new pc.ScriptRegistry(this);
         this.renderer = new pc.ForwardRenderer(this.graphicsDevice);
         this.lightmapper = new pc.Lightmapper(this.graphicsDevice, this.root, this.scene, this.renderer, this.assets);
@@ -242,7 +243,7 @@ pc.extend(pc, function () {
 
     Application._currentApplication = null;
     Application._applications = {};
-    Application.getApplication = function (id) {
+    Application.getApplication = function(id) {
         if (id) {
             return Application._applications[id];
         } else {
@@ -252,41 +253,36 @@ pc.extend(pc, function () {
 
 
     // Mini-object used to measure progress of loading sets
-    var Progress = function (length) {
+    var Progress = function(length) {
         this.length = length;
         this.count = 0;
 
-        this.inc = function () {
+        this.inc = function() {
             this.count++;
         };
 
-        this.done = function () {
+        this.done = function() {
             return (this.count === this.length);
         };
     };
 
     Application.prototype = {
         /**
-        * @function
-        * @name pc.Application#configure
-        * @description Load the application configuration file and apply application properties and fill the asset registry
-        * @param {String} url The URL of the configuration file to load
-        * @param {Function} callback The Function called when the configuration file is loaded and parsed
-        */
-        configure: function (url, callback) {
+         * @function
+         * @name pc.Application#configure
+         * @description Load the application configuration file and apply application properties and fill the asset registry
+         * @param {String} url The URL of the configuration file to load
+         * @param {Function} callback The Function called when the configuration file is loaded and parsed
+         */
+        configure: function(url, callback) {
             var self = this;
-            pc.http.get(url, function (err, response) {
-                if (err) {
-                    callback(err);
-                    return;
-                }
-
-                var props = response['application_properties'];
-                var assets = response['assets'];
-                var scripts = response['scripts'];
-                var priorityScripts = response['priority_scripts'];
-
-                self._parseApplicationProperties(props, function (err) {
+            this.customLoader.assets.get(url, "text").then(function(response) {
+                var result = JSON.parse(response);
+                var props = result["application_properties"];
+                var assets = result["assets"];
+                var scripts = result["scripts"];
+                var priorityScripts = result["priority_scripts"];
+                self._parseApplicationProperties(props, function(err) {
                     self._onVrChange(props.vr);
                     self._parseAssets(assets);
                     if (!err) {
@@ -295,16 +291,18 @@ pc.extend(pc, function () {
                         callback(err);
                     }
                 });
+            }).catch(function(err) {
+                callback(err);
             });
         },
 
         /**
-        * @function
-        * @name pc.Application#preload
-        * @description Load all assets in the asset registry that are marked as 'preload'
-        * @param {Function} callback Function called when all assets are loaded
-        */
-        preload: function (callback) {
+         * @function
+         * @name pc.Application#preload
+         * @description Load all assets in the asset registry that are marked as 'preload'
+         * @param {Function} callback Function called when all assets are loaded
+         */
+        preload: function(callback) {
             var self = this;
 
             self.fire("preload:start");
@@ -319,7 +317,7 @@ pc.extend(pc, function () {
             var _done = false;
 
             // check if all loading is done
-            var done = function () {
+            var done = function() {
                 // do not proceed if application destroyed
                 if (!self.graphicsDevice) {
                     return;
@@ -334,7 +332,7 @@ pc.extend(pc, function () {
 
             // totals loading progress of assets
             var total = assets.length;
-            var count = function () {
+            var count = function() {
                 return _assets.count;
             };
 
@@ -377,24 +375,24 @@ pc.extend(pc, function () {
         },
 
         /**
-        * @function
-        * @name pc.Application#loadSceneHierarchy
-        * @description Load a scene file, create and initialize the Entity hierarchy
-        * and add the hierarchy to the application root Entity.
-        * @param {String} url The URL of the scene file. Usually this will be "scene_id.json"
-        * @param {Function} callback The function to call after loading, passed (err, entity) where err is null if no errors occurred.
-        * @example
-        *
-        * app.loadSceneHierarchy("1000.json", function (err, entity) {
-        *     if (!err) {
-        *       var e = app.root.find("My New Entity");
-        *     } else {
-        *       // error
-        *     }
-        *   }
-        * });
-        */
-        loadSceneHierarchy: function (url, callback) {
+         * @function
+         * @name pc.Application#loadSceneHierarchy
+         * @description Load a scene file, create and initialize the Entity hierarchy
+         * and add the hierarchy to the application root Entity.
+         * @param {String} url The URL of the scene file. Usually this will be "scene_id.json"
+         * @param {Function} callback The function to call after loading, passed (err, entity) where err is null if no errors occurred.
+         * @example
+         *
+         * app.loadSceneHierarchy("1000.json", function (err, entity) {
+         *     if (!err) {
+         *       var e = app.root.find("My New Entity");
+         *     } else {
+         *       // error
+         *     }
+         *   }
+         * });
+         */
+        loadSceneHierarchy: function(url, callback) {
             var self = this;
 
             // Because we need to load scripts before we instance the hierarchy (i.e. before we create script components)
@@ -406,14 +404,14 @@ pc.extend(pc, function () {
                 url = pc.path.join(this.assets.prefix, url);
             }
 
-            handler.load(url, function (err, data) {
+            handler.load(url, function(err, data) {
                 if (err) {
                     if (callback) callback(err);
                     return;
                 }
 
                 // called after scripts are preloaded
-                var _loaded = function () {
+                var _loaded = function() {
                     var entity = handler.open(url, data);
 
                     // clear from cache because this data is modified by entity operations (e.g. destroy)
@@ -435,28 +433,28 @@ pc.extend(pc, function () {
         },
 
         /**
-        * @function
-        * @name pc.Application#loadSceneSettings
-        * @description Load a scene file and apply the scene settings to the current scene
-        * @param {String} url The URL of the scene file. Usually this will be "scene_id.json"
-        * @param {Function} callback The function called after the settings are applied. Passed (err) where err is null if no error occurred.
-        * @example
-        * app.loadSceneSettings("1000.json", function (err) {
-        *     if (!err) {
-        *       // success
-        *     } else {
-        *       // error
-        *     }
-        *   }
-        * });
-        */
-        loadSceneSettings: function (url, callback) {
+         * @function
+         * @name pc.Application#loadSceneSettings
+         * @description Load a scene file and apply the scene settings to the current scene
+         * @param {String} url The URL of the scene file. Usually this will be "scene_id.json"
+         * @param {Function} callback The function called after the settings are applied. Passed (err) where err is null if no error occurred.
+         * @example
+         * app.loadSceneSettings("1000.json", function (err) {
+         *     if (!err) {
+         *       // success
+         *     } else {
+         *       // error
+         *     }
+         *   }
+         * });
+         */
+        loadSceneSettings: function(url, callback) {
             // include asset prefix if present
             if (this.assets && this.assets.prefix && !pc.ABSOLUTE_URL.test(url)) {
                 url = pc.path.join(this.assets.prefix, url);
             }
 
-            this.loader.load(url, "scenesettings", function (err, settings) {
+            this.loader.load(url, "scenesettings", function(err, settings) {
                 if (!err) {
                     this.applySceneSettings(settings);
                     if (callback) {
@@ -471,7 +469,7 @@ pc.extend(pc, function () {
             }.bind(this));
         },
 
-        loadScene: function (url, callback) {
+        loadScene: function(url, callback) {
             var self = this;
 
             var handler = this.loader.getHandler("scene");
@@ -481,9 +479,9 @@ pc.extend(pc, function () {
                 url = pc.path.join(this.assets.prefix, url);
             }
 
-            handler.load(url, function (err, data) {
+            handler.load(url, function(err, data) {
                 if (!err) {
-                    var _loaded = function () {
+                    var _loaded = function() {
                         // parse and create scene
                         var scene = handler.open(url, data);
 
@@ -518,8 +516,8 @@ pc.extend(pc, function () {
             }.bind(this));
         },
 
-        _preloadScripts: function (sceneData, callback) {
-            if (! pc.script.legacy) {
+        _preloadScripts: function(sceneData, callback) {
+            if (!pc.script.legacy) {
                 callback();
                 return;
             }
@@ -530,13 +528,14 @@ pc.extend(pc, function () {
 
             var scripts = this._getScriptReferences(sceneData);
 
-            var i = 0, l = scripts.length;
+            var i = 0,
+                l = scripts.length;
             var progress = new Progress(l);
             var scriptUrl;
             var regex = /^http(s)?:\/\//;
 
             if (l) {
-                var onLoad = function (err, ScriptType) {
+                var onLoad = function(err, ScriptType) {
                     if (err)
                         console.error(err);
 
@@ -562,15 +561,15 @@ pc.extend(pc, function () {
         },
 
         // set application properties from data file
-        _parseApplicationProperties: function (props, callback) {
+        _parseApplicationProperties: function(props, callback) {
             // TODO: remove this temporary block after migrating properties
-            if (! props.useDevicePixelRatio)
+            if (!props.useDevicePixelRatio)
                 props.useDevicePixelRatio = props.use_device_pixel_ratio;
-            if (! props.resolutionMode)
+            if (!props.resolutionMode)
                 props.resolutionMode = props.resolution_mode;
-            if (! props.fillMode)
+            if (!props.fillMode)
                 props.fillMode = props.fill_mode;
-            if (! props.vrPolyfillUrl)
+            if (!props.vrPolyfillUrl)
                 props.vrPolyfillUrl = props.vr_polyfill_url;
 
             this._width = props.width;
@@ -593,7 +592,7 @@ pc.extend(pc, function () {
             this._loadLibraries(props.libraries, callback);
         },
 
-        _loadLibraries: function (urls, callback) {
+        _loadLibraries: function(urls, callback) {
             var len = urls.length;
             var count = len;
             var self = this;
@@ -625,17 +624,17 @@ pc.extend(pc, function () {
         },
 
         // insert assets into registry
-        _parseAssets: function (assets) {
-            var scripts = [ ];
-            var list = [ ];
+        _parseAssets: function(assets) {
+            var scripts = [];
+            var list = [];
 
-            var scriptsIndex = { };
+            var scriptsIndex = {};
 
-            if (! pc.script.legacy) {
+            if (!pc.script.legacy) {
                 // add scripts in order of loading first
-                for(var i = 0; i < this.scriptsOrder.length; i++) {
+                for (var i = 0; i < this.scriptsOrder.length; i++) {
                     var id = this.scriptsOrder[i];
-                    if (! assets[id])
+                    if (!assets[id])
                         continue;
 
                     scriptsIndex[id] = true;
@@ -643,18 +642,18 @@ pc.extend(pc, function () {
                 }
 
                 // then add rest of assets
-                for(var id in assets) {
+                for (var id in assets) {
                     if (scriptsIndex[id])
                         continue;
 
                     list.push(assets[id]);
                 }
             } else {
-                for(var id in assets)
+                for (var id in assets)
                     list.push(assets[id]);
             }
 
-            for(var i = 0; i < list.length; i++) {
+            for (var i = 0; i < list.length; i++) {
                 var data = list[i];
                 var asset = new pc.Asset(data.name, data.type, data.file, data.data);
                 asset.id = parseInt(data.id);
@@ -666,7 +665,7 @@ pc.extend(pc, function () {
             }
         },
 
-        _getScriptReferences: function (scene) {
+        _getScriptReferences: function(scene) {
             var i, key;
 
             var priorityScripts = [];
@@ -691,7 +690,7 @@ pc.extend(pc, function () {
                 }
 
                 var scripts = entities[key].components.script.scripts;
-                for(i = 0; i < scripts.length; i++) {
+                for (i = 0; i < scripts.length; i++) {
                     if (_index[scripts[i].url])
                         continue;
                     _scripts.push(scripts[i].url);
@@ -707,7 +706,7 @@ pc.extend(pc, function () {
          * @name pc.Application#start
          * @description Start the Application updating
          */
-        start: function () {
+        start: function() {
             this.fire("start", {
                 timestamp: pc.now(),
                 target: this
@@ -732,7 +731,7 @@ pc.extend(pc, function () {
          * @description Application specific update method. Override this if you have a custom Application
          * @param {Number} dt The time delta since the last frame.
          */
-        update: function (dt) {
+        update: function(dt) {
             this.graphicsDevice.updateClientRect();
 
             if (this.vr) this.vr.poll();
@@ -774,7 +773,7 @@ pc.extend(pc, function () {
          * @name pc.Application#render
          * @description Application specific render method. Override this if you have a custom Application
          */
-        render: function () {
+        render: function() {
             // #ifdef PROFILER
             this.stats.frame.renderStart = pc.now();
             // #endif
@@ -788,7 +787,7 @@ pc.extend(pc, function () {
             this.root.syncHierarchy();
 
             // render the scene from each camera
-            for (var i=0,len=cameras.length; i<len; i++) {
+            for (var i = 0, len = cameras.length; i < len; i++) {
                 camera = cameras[i];
                 camera.frameBegin();
                 renderer.render(this.scene, camera.camera);
@@ -822,17 +821,17 @@ pc.extend(pc, function () {
             stats.depthMapTime = this.renderer._depthMapTime;
             stats.forwardTime = this.renderer._forwardTime;
             var prims = this.graphicsDevice._primsPerFrame;
-            stats.triangles = prims[pc.PRIMITIVE_TRIANGLES]/3 +
-                Math.max(prims[pc.PRIMITIVE_TRISTRIP]-2, 0) +
-                Math.max(prims[pc.PRIMITIVE_TRIFAN]-2, 0);
+            stats.triangles = prims[pc.PRIMITIVE_TRIANGLES] / 3 +
+                Math.max(prims[pc.PRIMITIVE_TRISTRIP] - 2, 0) +
+                Math.max(prims[pc.PRIMITIVE_TRIFAN] - 2, 0);
             stats.cullTime = this.renderer._cullTime;
             stats.sortTime = this.renderer._sortTime;
             stats.skinTime = this.renderer._skinTime;
             stats.morphTime = this.renderer._morphTime;
             stats.instancingTime = this.renderer._instancingTime;
             stats.otherPrimitives = 0;
-            for(var i=0; i<prims.length; i++) {
-                if (i<pc.PRIMITIVE_TRIANGLES) {
+            for (var i = 0; i < prims.length; i++) {
+                if (i < pc.PRIMITIVE_TRIANGLES) {
                     stats.otherPrimitives += prims[i];
                 }
                 prims[i] = 0;
@@ -880,36 +879,36 @@ pc.extend(pc, function () {
         },
 
         /**
-        * @function
-        * @name pc.Application#setCanvasFillMode
-        * @description Controls how the canvas fills the window and resizes when the window changes.
-        * @param {String} mode The mode to use when setting the size of the canvas. Can be:
-        * <ul>
-        *     <li>pc.FILLMODE_NONE: the canvas will always match the size provided.</li>
-        *     <li>pc.FILLMODE_FILL_WINDOW: the canvas will simply fill the window, changing aspect ratio.</li>
-        *     <li>pc.FILLMODE_KEEP_ASPECT: the canvas will grow to fill the window as best it can while maintaining the aspect ratio.</li>
-        * </ul>
-        * @param {Number} [width] The width of the canvas (only used when mode is pc.FILLMODE_NONE).
-        * @param {Number} [height] The height of the canvas (only used when mode is pc.FILLMODE_NONE).
-        */
-        setCanvasFillMode: function (mode, width, height) {
+         * @function
+         * @name pc.Application#setCanvasFillMode
+         * @description Controls how the canvas fills the window and resizes when the window changes.
+         * @param {String} mode The mode to use when setting the size of the canvas. Can be:
+         * <ul>
+         *     <li>pc.FILLMODE_NONE: the canvas will always match the size provided.</li>
+         *     <li>pc.FILLMODE_FILL_WINDOW: the canvas will simply fill the window, changing aspect ratio.</li>
+         *     <li>pc.FILLMODE_KEEP_ASPECT: the canvas will grow to fill the window as best it can while maintaining the aspect ratio.</li>
+         * </ul>
+         * @param {Number} [width] The width of the canvas (only used when mode is pc.FILLMODE_NONE).
+         * @param {Number} [height] The height of the canvas (only used when mode is pc.FILLMODE_NONE).
+         */
+        setCanvasFillMode: function(mode, width, height) {
             this._fillMode = mode;
             this.resizeCanvas(width, height);
         },
 
         /**
-        * @function
-        * @name pc.Application#setCanvasResolution
-        * @description Change the resolution of the canvas, and set the way it behaves when the window is resized
-        * @param {string} mode The mode to use when setting the resolution. Can be:
-        * <ul>
-        *     <li>pc.RESOLUTION_AUTO: if width and height are not provided, canvas will be resized to match canvas client size.</li>
-        *     <li>pc.RESOLUTION_FIXED: resolution of canvas will be fixed.</li>
-        * </ul>
-        * @param {Number} [width] The horizontal resolution, optional in AUTO mode, if not provided canvas clientWidth is used
-        * @param {Number} [height] The vertical resolution, optional in AUTO mode, if not provided canvas clientHeight is used
-        */
-        setCanvasResolution: function (mode, width, height) {
+         * @function
+         * @name pc.Application#setCanvasResolution
+         * @description Change the resolution of the canvas, and set the way it behaves when the window is resized
+         * @param {string} mode The mode to use when setting the resolution. Can be:
+         * <ul>
+         *     <li>pc.RESOLUTION_AUTO: if width and height are not provided, canvas will be resized to match canvas client size.</li>
+         *     <li>pc.RESOLUTION_FIXED: resolution of canvas will be fixed.</li>
+         * </ul>
+         * @param {Number} [width] The horizontal resolution, optional in AUTO mode, if not provided canvas clientWidth is used
+         * @param {Number} [height] The vertical resolution, optional in AUTO mode, if not provided canvas clientHeight is used
+         */
+        setCanvasResolution: function(mode, width, height) {
             this._resolutionMode = mode;
 
             // In AUTO mode the resolution is the same as the canvas size, unless specified
@@ -922,44 +921,44 @@ pc.extend(pc, function () {
         },
 
         /**
-        * @function
-        * @name pc.Application#isFullscreen
-        * @description Returns true if the application is currently running fullscreen
-        * @returns {Boolean} True if the application is running fullscreen
-        */
-        isFullscreen: function () {
+         * @function
+         * @name pc.Application#isFullscreen
+         * @description Returns true if the application is currently running fullscreen
+         * @returns {Boolean} True if the application is running fullscreen
+         */
+        isFullscreen: function() {
             return !!document.fullscreenElement;
         },
 
         /**
-        * @function
-        * @name pc.Application#enableFullscreen
-        * @description Request that the browser enters fullscreen mode. This is not available on all browsers.
-        * Note: Switching to fullscreen can only be initiated by a user action, e.g. in the event hander for a mouse or keyboard input
-        * @param {Element} [element] The element to display in fullscreen, if element is not provided the application canvas is used
-        * @param {Function} [success] Function called if the request for fullscreen was successful
-        * @param {Function} [error] Function called if the request for fullscreen was unsuccessful
-        * @example
-        * var button = document.getElementById('my-button');
-        * button.addEventListener('click', function () {
-        *     app.enableFullscreen(canvas, function () {
-        *         console.log('Now fullscreen');
-        *     }, function () {
-        *         console.log('Something went wrong!');
-        *     });
-        * }, false);
-        */
-        enableFullscreen: function (element, success, error) {
+         * @function
+         * @name pc.Application#enableFullscreen
+         * @description Request that the browser enters fullscreen mode. This is not available on all browsers.
+         * Note: Switching to fullscreen can only be initiated by a user action, e.g. in the event hander for a mouse or keyboard input
+         * @param {Element} [element] The element to display in fullscreen, if element is not provided the application canvas is used
+         * @param {Function} [success] Function called if the request for fullscreen was successful
+         * @param {Function} [error] Function called if the request for fullscreen was unsuccessful
+         * @example
+         * var button = document.getElementById('my-button');
+         * button.addEventListener('click', function () {
+         *     app.enableFullscreen(canvas, function () {
+         *         console.log('Now fullscreen');
+         *     }, function () {
+         *         console.log('Something went wrong!');
+         *     });
+         * }, false);
+         */
+        enableFullscreen: function(element, success, error) {
             element = element || this.graphicsDevice.canvas;
 
             // success callback
-            var s = function () {
+            var s = function() {
                 success();
                 document.removeEventListener('fullscreenchange', s);
             };
 
             // error callback
-            var e = function () {
+            var e = function() {
                 error();
                 document.removeEventListener('fullscreenerror', e);
             };
@@ -981,14 +980,14 @@ pc.extend(pc, function () {
         },
 
         /**
-        * @function
-        * @name pc.Application#disableFullscreen
-        * @description If application is currently displaying an element as fullscreen, then stop and return to normal.
-        * @param {Function} [success] Function called when transition to normal mode is finished
-        */
-        disableFullscreen: function (success) {
+         * @function
+         * @name pc.Application#disableFullscreen
+         * @description If application is currently displaying an element as fullscreen, then stop and return to normal.
+         * @param {Function} [success] Function called when transition to normal mode is finished
+         */
+        disableFullscreen: function(success) {
             // success callback
-            var s = function () {
+            var s = function() {
                 success();
                 document.removeEventListener('fullscreenchange', s);
             };
@@ -1001,22 +1000,22 @@ pc.extend(pc, function () {
         },
 
         /**
-        * @function
-        * @name pc.Application#isHidden
-        * @description Queries the visibility of the window or tab in which the application is running.
-        * @returns {Boolean} True if the application is not visible and false otherwise.
-        */
-        isHidden: function () {
+         * @function
+         * @name pc.Application#isHidden
+         * @description Queries the visibility of the window or tab in which the application is running.
+         * @returns {Boolean} True if the application is not visible and false otherwise.
+         */
+        isHidden: function() {
             return document[this._hiddenAttr];
         },
 
         /**
-        * @private
-        * @function
-        * @name pc.Application#onVisibilityChange
-        * @description Called when the visibility state of the current tab/window changes
-        */
-        onVisibilityChange: function (e) {
+         * @private
+         * @function
+         * @name pc.Application#onVisibilityChange
+         * @description Called when the visibility state of the current tab/window changes
+         */
+        onVisibilityChange: function(e) {
             if (this.isHidden()) {
                 this._audioManager.suspend();
             } else {
@@ -1025,17 +1024,17 @@ pc.extend(pc, function () {
         },
 
         /**
-        * @function
-        * @name pc.Application#resizeCanvas
-        * @description Resize the canvas in line with the current FillMode
-        * In KEEP_ASPECT mode, the canvas will grow to fill the window as best it can while maintaining the aspect ratio
-        * In FILL_WINDOW mode, the canvas will simply fill the window, changing aspect ratio
-        * In NONE mode, the canvas will always match the size provided
-        * @param {Number} [width] The width of the canvas, only used in NONE mode
-        * @param {Number} [height] The height of the canvas, only used in NONE mode
-        * @returns {Object} A object containing the values calculated to use as width and height
-        */
-        resizeCanvas: function (width, height) {
+         * @function
+         * @name pc.Application#resizeCanvas
+         * @description Resize the canvas in line with the current FillMode
+         * In KEEP_ASPECT mode, the canvas will grow to fill the window as best it can while maintaining the aspect ratio
+         * In FILL_WINDOW mode, the canvas will simply fill the window, changing aspect ratio
+         * In NONE mode, the canvas will always match the size provided
+         * @param {Number} [width] The width of the canvas, only used in NONE mode
+         * @param {Number} [height] The height of the canvas, only used in NONE mode
+         * @returns {Object} A object containing the values calculated to use as width and height
+         */
+        resizeCanvas: function(width, height) {
             if (!this._allowResize) return; // prevent resizing (e.g. if presenting in VR HMD)
 
             var windowWidth = window.innerWidth;
@@ -1048,12 +1047,12 @@ pc.extend(pc, function () {
                 this.graphicsDevice.resizeCanvas(width, height);
             } else {
                 if (this._fillMode === pc.FILLMODE_KEEP_ASPECT) {
-                    var r = this.graphicsDevice.canvas.width/this.graphicsDevice.canvas.height;
+                    var r = this.graphicsDevice.canvas.width / this.graphicsDevice.canvas.height;
                     var winR = windowWidth / windowHeight;
 
                     if (r > winR) {
                         width = windowWidth;
-                        height = width / r ;
+                        height = width / r;
                     } else {
                         height = windowHeight;
                         width = height * r;
@@ -1082,19 +1081,19 @@ pc.extend(pc, function () {
         },
 
         /**
-        * @private
-        * @name pc.Application#onLibrariesLoaded
-        * @description Event handler called when all code libraries have been loaded
-        * Code libraries are passed into the constructor of the Application and the application won't start running or load packs until all libraries have
-        * been loaded
-        */
-        onLibrariesLoaded: function () {
+         * @private
+         * @name pc.Application#onLibrariesLoaded
+         * @description Event handler called when all code libraries have been loaded
+         * Code libraries are passed into the constructor of the Application and the application won't start running or load packs until all libraries have
+         * been loaded
+         */
+        onLibrariesLoaded: function() {
             this._librariesLoaded = true;
             this.systems.rigidbody.onLibraryLoaded();
             this.systems.collision.onLibraryLoaded();
         },
 
-        applySceneSettings: function (settings) {
+        applySceneSettings: function(settings) {
             var asset;
 
             if (this.systems.rigidbody && typeof Ammo !== 'undefined') {
@@ -1120,15 +1119,15 @@ pc.extend(pc, function () {
         },
 
         /**
-        * @function
-        * @name pc.Application#setSkybox
-        * @description Sets the skybox asset to current scene, and subscribes to asset load/change events
-        * @param {pc.Asset} asset Asset of type `skybox` to be set to, or null to remove skybox
-        */
+         * @function
+         * @name pc.Application#setSkybox
+         * @description Sets the skybox asset to current scene, and subscribes to asset load/change events
+         * @param {pc.Asset} asset Asset of type `skybox` to be set to, or null to remove skybox
+         */
         setSkybox: function(asset) {
             if (asset) {
                 if (this._skyboxLast === asset.id) {
-                    if (this.scene.skyboxMip === 0 && ! asset.loadFaces) {
+                    if (this.scene.skyboxMip === 0 && !asset.loadFaces) {
                         this._skyboxLoad(asset);
                     } else {
                         this._onSkyboxChange(asset);
@@ -1152,7 +1151,7 @@ pc.extend(pc, function () {
 
                 this._skyboxLoad(asset);
             } else {
-                if (! this._skyboxLast)
+                if (!this._skyboxLast)
                     return;
 
                 this._skyboxRemove({
@@ -1161,7 +1160,7 @@ pc.extend(pc, function () {
             }
         },
 
-        _onVrChange: function (enabled) {
+        _onVrChange: function(enabled) {
             if (enabled) {
                 if (!this.vr) {
                     this.vr = new pc.VrManager(this);
@@ -1188,7 +1187,7 @@ pc.extend(pc, function () {
         },
 
         _skyboxRemove: function(asset) {
-            if (! this._skyboxLast)
+            if (!this._skyboxLast)
                 return;
 
             this.assets.off('add:' + asset.id, this.setSkybox, this);
@@ -1203,11 +1202,11 @@ pc.extend(pc, function () {
         },
 
         /**
-        * @function
-        * @name pc.Application#destroy
-        * @description Destroys application and removes all event listeners.
-        */
-        destroy: function () {
+         * @function
+         * @name pc.Application#destroy
+         * @description Destroys application and removes all event listeners.
+         */
+        destroy: function() {
             Application._applications[this.graphicsDevice.canvas.id] = null;
 
             this.off('librariesloaded');
@@ -1287,10 +1286,10 @@ pc.extend(pc, function () {
     };
 
     // create tick function to be wrapped in closure
-    var makeTick = function (_app) {
+    var makeTick = function(_app) {
         var app = _app;
-        return function () {
-            if (! app.graphicsDevice)
+        return function() {
+            if (!app.graphicsDevice)
                 return;
 
             Application._currentApplication = app;
@@ -1330,7 +1329,7 @@ pc.extend(pc, function () {
             _frameEndData.target = app;
 
             app.fire("frameend", _frameEndData);
-            app.fire("frameEnd", _frameEndData);// deprecated old event, remove when editor updated
+            app.fire("frameEnd", _frameEndData); // deprecated old event, remove when editor updated
 
             if (app.vr && app.vr.display && app.vr.display.presenting) {
                 app.vr.display.submitFrame();
@@ -1360,16 +1359,16 @@ pc.extend(pc, function () {
          */
         FILLMODE_KEEP_ASPECT: 'KEEP_ASPECT',
         /**
-        * @enum pc.RESOLUTION
-        * @name pc.RESOLUTION_AUTO
-        * @description When the canvas is resized the resolution of the canvas will change to match the size of the canvas.
-        */
+         * @enum pc.RESOLUTION
+         * @name pc.RESOLUTION_AUTO
+         * @description When the canvas is resized the resolution of the canvas will change to match the size of the canvas.
+         */
         RESOLUTION_AUTO: 'AUTO',
         /**
-        * @enum pc.RESOLUTION
-        * @name pc.RESOLUTION_FIXED
-        * @description When the canvas is resized the resolution of the canvas will remain at the same value and the output will just be scaled to fit the canvas.
-        */
+         * @enum pc.RESOLUTION
+         * @name pc.RESOLUTION_FIXED
+         * @description When the canvas is resized the resolution of the canvas will remain at the same value and the output will just be scaled to fit the canvas.
+         */
         RESOLUTION_FIXED: 'FIXED',
 
         Application: Application

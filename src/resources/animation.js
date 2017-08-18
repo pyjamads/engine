@@ -1,25 +1,24 @@
-pc.extend(pc, function () {
+pc.extend(pc, function() {
     'use strict';
 
-    var AnimationHandler = function () {
-    };
+    var AnimationHandler = function() {};
 
     AnimationHandler.prototype = {
-        load: function (url, callback) {
-            pc.http.get(url, function (err, response) {
-                if (err) {
-                    callback(pc.string.format("Error loading animation resource: {0} [{1}]", url, err));
-                } else {
-                    callback(null, response);
-                }
-            }.bind(this));
+        load: function(url, callback) {
+            var actual = url.split("?")[0];
+            console.log("requesting: " + actual);
+            pc.Application.getApplication().customLoader.assets.get(actual, "text").then(function(response) {
+                callback(null, JSON.parse(response));
+            }.bind(this)).catch(function(err) {
+                callback(pc.string.format("Error loading animation resource: {0} [{1}]", url, err));
+            });
         },
 
-        open: function (url, data) {
+        open: function(url, data) {
             return this["_parseAnimationV" + data.animation.version](data);
         },
 
-        _parseAnimationV3: function (data) {
+        _parseAnimationV3: function(data) {
             var animData = data.animation;
 
             var anim = new pc.Animation();
@@ -54,7 +53,7 @@ pc.extend(pc, function () {
             return anim;
         },
 
-        _parseAnimationV4: function (data) {
+        _parseAnimationV4: function(data) {
             var animData = data.animation;
 
             var anim = new pc.Animation();

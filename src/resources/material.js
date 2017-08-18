@@ -1,4 +1,4 @@
-pc.extend(pc, function () {
+pc.extend(pc, function() {
     'use strict';
 
     var PARAMETER_TYPES = {
@@ -53,7 +53,7 @@ pc.extend(pc, function () {
         emissiveMapChannel: 'string',
         emissiveMapUv: 'number',
         emissiveMapTiling: 'vec2',
-        emissiveMapOffset: 'vec2' ,
+        emissiveMapOffset: 'vec2',
         emissiveMapTint: 'boolean',
         emissiveIntensity: 'number',
         normalMap: 'texture',
@@ -88,14 +88,14 @@ pc.extend(pc, function () {
         lightMapUv: 'number',
         lightMapTiling: 'vec2',
         lightMapOffset: 'vec2',
-        depthTest: 'boolean' ,
+        depthTest: 'boolean',
         depthWrite: 'boolean',
         cull: 'number',
         blendType: 'number',
         shadingModel: 'number'
     };
 
-    var placeholders = { };
+    var placeholders = {};
     var placeholdersMapping = {
         aoMap: 'white',
         diffuseMap: 'gray',
@@ -110,7 +110,7 @@ pc.extend(pc, function () {
         lightMap: 'white'
     };
 
-    var onCubemapAssetLoad = function (asset, attribute, newValue, oldValue) {
+    var onCubemapAssetLoad = function(asset, attribute, newValue, oldValue) {
         var props = [
             'cubeMap',
             'prefilteredCubeMap128',
@@ -129,7 +129,7 @@ pc.extend(pc, function () {
         this.update();
     };
 
-    var MaterialHandler = function (app) {
+    var MaterialHandler = function(app) {
         this._assets = app.assets;
         this._device = app.graphicsDevice;
 
@@ -137,22 +137,22 @@ pc.extend(pc, function () {
     };
 
     MaterialHandler.prototype = {
-        load: function (url, callback) {
+        load: function(url, callback) {
             // Loading from URL (engine-only)
-            pc.http.get(url, function(err, response) {
-                if (!err) {
-                    if (callback) {
-                        callback(null, response);
-                    }
-                } else {
-                    if (callback) {
-                        callback(pc.string.format("Error loading material: {0} [{1}]", url, err));
-                    }
+            var actual = url.split("?")[0];
+            console.log("requesting: " + actual);
+            pc.Application.getApplication().customLoader.assets.get(actual).then(function(response) {
+                if (callback) {
+                    callback(null, response);
+                }
+            }).catch(function(err) {
+                if (callback) {
+                    callback(pc.string.format("Error loading material: {0} [{1}]", url, err));
                 }
             });
         },
 
-        open: function (url, data) {
+        open: function(url, data) {
             var material = new pc.StandardMaterial();
 
             // TODO: this is a bit of a mess,
@@ -172,14 +172,14 @@ pc.extend(pc, function () {
         // that are used while texture is loading
         _createPlaceholders: function() {
             var textures = {
-                white: [ 255, 255, 255, 255 ],
-                gray: [ 128, 128, 128, 255 ],
-                black: [ 0, 0, 0, 255 ],
-                normal: [ 128, 128, 255, 255 ]
+                white: [255, 255, 255, 255],
+                gray: [128, 128, 128, 255],
+                black: [0, 0, 0, 255],
+                normal: [128, 128, 255, 255]
             };
 
-            for(var key in textures) {
-                if (! textures.hasOwnProperty(key))
+            for (var key in textures) {
+                if (!textures.hasOwnProperty(key))
                     continue;
 
                 // create texture
@@ -191,8 +191,8 @@ pc.extend(pc, function () {
 
                 // fill pixels with color
                 var pixels = texture.lock();
-                for(var i = 0; i < 4; i++) {
-                    for(var c = 0; c < 4; c++) {
+                for (var i = 0; i < 4; i++) {
+                    for (var c = 0; c < 4; c++) {
                         pixels[i * 4 + c] = textures[key][c];
                     }
                 }
@@ -201,7 +201,7 @@ pc.extend(pc, function () {
         },
 
         // creates parameters array from data dictionary
-        _createParameters: function (data) {
+        _createParameters: function(data) {
             var parameters = [];
 
             if (!data.shadingModel) {
@@ -228,7 +228,7 @@ pc.extend(pc, function () {
             data.parameters = parameters;
         },
 
-        patch: function (asset, assets) {
+        patch: function(asset, assets) {
             if (asset.data.shader === undefined) {
                 // for engine-only users restore original material data
                 asset.data = asset.resource._data;
@@ -242,20 +242,20 @@ pc.extend(pc, function () {
             asset.on('unload', this._onAssetUnload, this);
         },
 
-        _onAssetChange: function (asset, attribute, value) {
+        _onAssetChange: function(asset, attribute, value) {
             if (attribute === 'data') {
                 this._updateStandardMaterial(asset, value, this._assets);
             }
         },
 
-        _onAssetUnload: function (asset) {
+        _onAssetUnload: function(asset) {
             // remove the parameter block we created which includes texture references
             delete asset.data.parameters;
             delete asset.data.chunks;
             delete asset.data.name;
         },
 
-        _updateStandardMaterial: function (asset, data, assets) {
+        _updateStandardMaterial: function(asset, data, assets) {
             var material = asset.resource;
             var dir;
 
@@ -275,12 +275,12 @@ pc.extend(pc, function () {
             // Replace texture ids with actual textures
             // Should we copy 'data' here instead of updating in place?
             // TODO: This calls material.init() for _every_ texture and cubemap field in the texture with an asset. Combine this into one call to init!
-            data.parameters.forEach(function (param, i) {
+            data.parameters.forEach(function(param, i) {
                 var id;
 
                 if (param.type === 'texture') {
-                    if (! material._assetHandlers)
-                        material._assetHandlers = { };
+                    if (!material._assetHandlers)
+                        material._assetHandlers = {};
 
                     // asset handler
                     var handler = material._assetHandlers[param.name];
@@ -319,7 +319,7 @@ pc.extend(pc, function () {
                             add: function(asset) {
                                 assets.load(asset);
                             },
-                            remove: function (asset) {
+                            remove: function(asset) {
                                 if (material[data.parameters[i].name] === asset.resource) {
                                     data.parameters[i].data = null;
                                     material[data.parameters[i].name] = null;
@@ -354,7 +354,7 @@ pc.extend(pc, function () {
                         } else if (pathMapping) {
                             assets.once('add:url:' + handler.url, handler.add);
                         }
-                    } else if (handler && ! param.data) {
+                    } else if (handler && !param.data) {
                         // unbind events
                         assets.off('load:' + handler.id, handler.bind);
                         assets.off('add:' + handler.id, handler.add);
@@ -421,8 +421,8 @@ pc.extend(pc, function () {
                     } else if (id) {
                         assets.once("add:" + id, onAdd);
                     } else if (pathMapping) {
-                        assets.once("add:url:" + pc.path.join(dir, param.data), function (asset) {
-                            asset.ready(function (asset) {
+                        assets.once("add:url:" + pc.path.join(dir, param.data), function(asset) {
+                            asset.ready(function(asset) {
                                 // TODO
                                 // update specific param instead of all of them
                                 data.parameters[i].data = asset.resource;
@@ -443,7 +443,7 @@ pc.extend(pc, function () {
 
     return {
         MaterialHandler: MaterialHandler,
-        getMaterialParamType: function (name) {
+        getMaterialParamType: function(name) {
             return PARAMETER_TYPES[name];
         }
     };

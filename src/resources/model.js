@@ -1,11 +1,11 @@
-pc.extend(pc, function () {
+pc.extend(pc, function() {
     /**
      * @name pc.ModelHandler
      * @class Resource Handler for creating pc.Model resources
      * @description {@link pc.ResourceHandler} use to load 3D model resources
      * @param {pc.GraphicsDevice} device The graphics device that will be rendering
      */
-    var ModelHandler = function (device) {
+    var ModelHandler = function(device) {
         this._device = device;
     };
 
@@ -17,27 +17,28 @@ pc.extend(pc, function () {
          * @name pc.ModelHandler#load
          * @description Fetch model data from a remote url
          */
-        load: function (url, callback) {
-            pc.http.get(url, function (err, response) {
-                if (! callback)
-                    return;
-
-                if (! err) {
-                    callback(null, response);
-                } else {
+        load: function(url, callback) {
+            var actual = url.split("?")[0];
+            console.log("requesting: " + actual);
+            pc.Application.getApplication().customLoader.assets.get(actual, "text").then(function(response) {
+                if (callback) {
+                    callback(null, JSON.parse(response));
+                }
+            }).catch(function(err) {
+                if (callback) {
                     callback(pc.string.format("Error loading model: {0} [{1}]", url, err));
                 }
             });
         },
 
-         /**
+        /**
          * @function
          * @name pc.ModelHandler#open
          * @description Process data in deserialized format into a pc.Model object
          * @param {Object} data The data from model file deserialized into a Javascript Object
          */
-        open: function (url, data) {
-            if (! data.model)
+        open: function(url, data) {
+            if (!data.model)
                 return;
 
             if (data.model.version <= 1) {
@@ -50,13 +51,13 @@ pc.extend(pc, function () {
             return null;
         },
 
-        patch: function (asset, assets) {
-            if (! asset.resource)
+        patch: function(asset, assets) {
+            if (!asset.resource)
                 return;
 
             var data = asset.data;
 
-            asset.resource.meshInstances.forEach(function (meshInstance, i) {
+            asset.resource.meshInstances.forEach(function(meshInstance, i) {
                 if (data.mapping) {
                     var handleMaterial = function(asset) {
                         if (asset.resource) {
@@ -72,7 +73,7 @@ pc.extend(pc, function () {
                         });
                     };
 
-                    if (! data.mapping[i]) {
+                    if (!data.mapping[i]) {
                         meshInstance.material = pc.ModelHandler.DEFAULT_MATERIAL;
                         return;
                     }
@@ -82,7 +83,7 @@ pc.extend(pc, function () {
                     var material;
 
                     if (id !== undefined) { // id mapping
-                        if (! id) {
+                        if (!id) {
                             meshInstance.material = pc.ModelHandler.DEFAULT_MATERIAL;
                         } else {
                             material = assets.get(id);

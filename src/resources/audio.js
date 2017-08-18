@@ -1,8 +1,8 @@
-pc.extend(pc, function () {
+pc.extend(pc, function() {
     'use strict';
 
     // checks if user is running IE
-    var ie = (function () {
+    var ie = (function() {
         var ua = window.navigator.userAgent;
 
         var msie = ua.indexOf('MSIE ');
@@ -21,12 +21,12 @@ pc.extend(pc, function () {
         return false;
     })();
 
-    var AudioHandler = function (manager) {
+    var AudioHandler = function(manager) {
         this.manager = manager;
     };
 
     AudioHandler.prototype = {
-        _isSupported: function (url) {
+        _isSupported: function(url) {
             var toMIME = {
                 '.ogg': 'audio/ogg',
                 '.mp3': 'audio/mpeg',
@@ -46,12 +46,12 @@ pc.extend(pc, function () {
             }
         },
 
-        load: function (url, callback) {
-            var success = function (resource) {
+        load: function(url, callback) {
+            var success = function(resource) {
                 callback(null, new pc.Sound(resource));
             };
 
-            var error = function (msg) {
+            var error = function(msg) {
                 msg = msg || 'Error loading audio url: ' + url;
                 console.warn(msg);
                 callback(msg);
@@ -69,7 +69,7 @@ pc.extend(pc, function () {
             }
         },
 
-        open: function (url, data) {
+        open: function(url, data) {
             return data;
         }
     };
@@ -85,21 +85,27 @@ pc.extend(pc, function () {
          * just want to continue without errors even if the audio is not loaded.
          * @param  {Function} error   Function to be called if there was an error while loading the audio asset
          */
-        AudioHandler.prototype._createSound = function (url, success, error) {
+        AudioHandler.prototype._createSound = function(url, success, error) {
             var manager = this.manager;
 
-            if (! manager.context) {
+            if (!manager.context) {
                 error('Audio manager has no audio context');
                 return;
             }
 
-            pc.http.get(url, function (err, response) {
-                if (err) {
-                    error(err);
-                    return;
-                }
+            var actual = url.split("?")[0];
+            console.log("requesting: " + actual);
+            pc.Application.getApplication().customLoader.assets.get(actual, "blob").then(function(response) {
+                var reader = new FileReader();
+                reader.readAsArrayBuffer(response);
 
-                manager.context.decodeAudioData(response, success, error);
+                var onLoadArrayBuffer = function() {
+                    manager.context.decodeAudioData(reader.result, success, error);
+                };
+
+                reader.onload = onLoadArrayBuffer;
+            }).catch(function(err) {
+                error(err);
             });
         };
 
@@ -114,7 +120,7 @@ pc.extend(pc, function () {
          * just want to continue without errors even if the audio is not loaded.
          * @param  {Function} error   Function to be called if there was an error while loading the audio asset
          */
-        AudioHandler.prototype._createSound = function (url, success, error) {
+        AudioHandler.prototype._createSound = function(url, success, error) {
             var audio = null;
 
             try {
@@ -131,7 +137,7 @@ pc.extend(pc, function () {
                 document.body.appendChild(audio);
             }
 
-            var onReady = function () {
+            var onReady = function() {
                 audio.removeEventListener('canplaythrough', onReady);
 
                 // remove from DOM no longer necessary
@@ -142,7 +148,7 @@ pc.extend(pc, function () {
                 success(audio);
             };
 
-            audio.onerror = function () {
+            audio.onerror = function() {
                 audio.onerror = null;
 
                 // remove from DOM no longer necessary

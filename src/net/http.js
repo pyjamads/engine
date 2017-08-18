@@ -1,27 +1,26 @@
-pc.extend(pc, function () {
+pc.extend(pc, function() {
     /**
-    * @name pc.Http
-    * @class Used to send and receive HTTP requests.
-    * @description Create a new Http instance. Note: By default a PlayCanvas application creates an instance of this object at `pc.http`.
-    */
-    var Http = function Http() {
-    };
+     * @name pc.Http
+     * @class Used to send and receive HTTP requests.
+     * @description Create a new Http instance. Note: By default a PlayCanvas application creates an instance of this object at `pc.http`.
+     */
+    var Http = function Http() {};
 
     Http.ContentType = {
-        FORM_URLENCODED : "application/x-www-form-urlencoded",
-        GIF : "image/gif",
-        JPEG : "image/jpeg",
-        DDS : "image/dds",
-        JSON : "application/json",
-        PNG : "image/png",
-        TEXT : "text/plain",
-        XML : "application/xml",
-        WAV : "audio/x-wav",
-        OGG : "audio/ogg",
-        MP3 : "audio/mpeg",
-        MP4 : "audio/mp4",
-        AAC : "audio/aac",
-        BIN : "application/octet-stream"
+        FORM_URLENCODED: "application/x-www-form-urlencoded",
+        GIF: "image/gif",
+        JPEG: "image/jpeg",
+        DDS: "image/dds",
+        JSON: "application/json",
+        PNG: "image/png",
+        TEXT: "text/plain",
+        XML: "application/xml",
+        WAV: "audio/x-wav",
+        OGG: "audio/ogg",
+        MP3: "audio/mpeg",
+        MP4: "audio/mp4",
+        AAC: "audio/aac",
+        BIN: "application/octet-stream"
     };
 
     Http.ResponseType = {
@@ -69,11 +68,12 @@ pc.extend(pc, function () {
          *     console.log(response);
          * });
          */
-        get: function (url, options, callback) {
+        get: function(url, options, callback) {
             if (typeof(options) === "function") {
                 callback = options;
                 options = {};
             }
+            console.error("This should not be used, use custom loader instead!");
             return this.request("GET", url, options, callback);
         },
 
@@ -94,7 +94,7 @@ pc.extend(pc, function () {
          * the postdata is JSON stringified, otherwise by default the data is sent as form-urlencoded
          * @param {Function} callback The callback used when the response has returned. Passed (err, data) where data is the response (format depends on response type, text, Object, ArrayBuffer, XML) and err is the error code.
          */
-        post: function (url, data, options, callback) {
+        post: function(url, data, options, callback) {
             if (typeof(options) === "function") {
                 callback = options;
                 options = {};
@@ -120,7 +120,7 @@ pc.extend(pc, function () {
          * the postdata is JSON stringified, otherwise by default the data is sent as form-urlencoded
          * @param {Function} callback The callback used when the response has returned. Passed (err, data) where data is the response (format depends on response type, text, Object, ArrayBuffer, XML) and err is the error code.
          */
-        put: function (url, data, options, callback) {
+        put: function(url, data, options, callback) {
             if (typeof(options) === "function") {
                 callback = options;
                 options = {};
@@ -146,7 +146,7 @@ pc.extend(pc, function () {
          * @param {Object} [options.cache] If false, then add a timestamp to the request to prevent caching
          * @param {Function} callback The callback used when the response has returned. Passed (err, data) where data is the response (format depends on response type, text, Object, ArrayBuffer, XML) and err is the error code.
          */
-        del: function (url, options, callback) {
+        del: function(url, options, callback) {
             if (typeof(options) === "function") {
                 callback = options;
                 options = {};
@@ -172,7 +172,7 @@ pc.extend(pc, function () {
          * @param {Object} [options.cache] If false, then add a timestamp to the request to prevent caching
          * @param {Function} callback The callback used when the response has retured. Passed (err, data) where data is the response (format depends on response type, text, Object, ArrayBuffer, XML) and err is the error code.
          */
-        request: function (method, url, options, callback) {
+        request: function(method, url, options, callback) {
             var uri, query, timestamp, postdata, xhr;
             var errored = false;
 
@@ -197,20 +197,18 @@ pc.extend(pc, function () {
                     // It's an XML document, so we can send it directly.
                     // XMLHttpRequest will set the content type correctly.
                     postdata = options.postdata;
-                }
-                else if (options.postdata instanceof FormData) {
+                } else if (options.postdata instanceof FormData) {
                     postdata = options.postdata;
-                }
-                else if (options.postdata instanceof Object) {
+                } else if (options.postdata instanceof Object) {
                     // Now to work out how to encode the post data based on the headers
                     var contentType = options.headers["Content-Type"];
 
                     // If there is no type then default to form-encoded
-                    if(contentType === undefined) {
+                    if (contentType === undefined) {
                         options.headers["Content-Type"] = Http.ContentType.FORM_URLENCODED;
                         contentType = options.headers["Content-Type"];
                     }
-                    switch(contentType) {
+                    switch (contentType) {
                         case Http.ContentType.FORM_URLENCODED:
                             // Normal URL encoded form data
                             postdata = "";
@@ -221,8 +219,7 @@ pc.extend(pc, function () {
                                 if (options.postdata.hasOwnProperty(key)) {
                                     if (bFirstItem) {
                                         bFirstItem = false;
-                                    }
-                                    else {
+                                    } else {
                                         postdata += "&";
                                     }
                                     postdata += escape(key) + "=" + escape(options.postdata[key]);
@@ -237,8 +234,7 @@ pc.extend(pc, function () {
                             postdata = JSON.stringify(options.postdata);
                             break;
                     }
-                }
-                else {
+                } else {
                     postdata = options.postdata;
                 }
             }
@@ -254,8 +250,7 @@ pc.extend(pc, function () {
                 uri = new pc.URI(url);
                 if (!uri.query) {
                     uri.query = "ts=" + timestamp;
-                }
-                else {
+                } else {
                     uri.query = uri.query + "&ts=" + timestamp;
                 }
                 url = uri.toString();
@@ -279,19 +274,18 @@ pc.extend(pc, function () {
                 }
             }
 
-            xhr.onreadystatechange = function () {
+            xhr.onreadystatechange = function() {
                 this._onReadyStateChange(method, url, options, xhr);
             }.bind(this);
 
-            xhr.onerror = function () {
+            xhr.onerror = function() {
                 this._onError(method, url, options, xhr);
                 errored = true;
             }.bind(this);
 
             try {
                 xhr.send(postdata);
-            }
-            catch (e) {
+            } catch (e) {
                 // DWE: Don't callback on exceptions as behaviour is inconsistent, e.g. cross-domain request errors don't throw an exception.
                 // Error callback should be called by xhr.onerror() callback instead.
                 if (!errored) {
@@ -303,11 +297,11 @@ pc.extend(pc, function () {
             return xhr;
         },
 
-        _guessResponseType: function (url) {
+        _guessResponseType: function(url) {
             var uri = new pc.URI(url);
             var ext = pc.path.getExtension(uri.path);
 
-            if(Http.binaryExtensions.indexOf(ext) >= 0) {
+            if (Http.binaryExtensions.indexOf(ext) >= 0) {
                 return Http.ResponseType.ARRAY_BUFFER;
             }
 
@@ -318,7 +312,7 @@ pc.extend(pc, function () {
             return Http.ResponseType.TEXT;
         },
 
-        _isBinaryContentType: function (contentType) {
+        _isBinaryContentType: function(contentType) {
             var binTypes = [Http.ContentType.MP4, Http.ContentType.WAV, Http.ContentType.OGG, Http.ContentType.MP3, Http.ContentType.BIN, Http.ContentType.DDS];
             if (binTypes.indexOf(contentType) >= 0) {
                 return true;
@@ -327,35 +321,38 @@ pc.extend(pc, function () {
             return false;
         },
 
-        _onReadyStateChange: function (method, url, options, xhr) {
+        _onReadyStateChange: function(method, url, options, xhr) {
             if (xhr.readyState === 4) {
                 switch (xhr.status) {
-                    case 0: {
-                        // If this is a local resource then continue (IOS) otherwise the request
-                        // didn't complete, possibly an exception or attempt to do cross-domain request
-                        if (url[0] != '/') {
-                            this._onSuccess(method, url, options, xhr);
-                        }
+                    case 0:
+                        {
+                            // If this is a local resource then continue (IOS) otherwise the request
+                            // didn't complete, possibly an exception or attempt to do cross-domain request
+                            if (url[0] != '/') {
+                                this._onSuccess(method, url, options, xhr);
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case 200:
                     case 201:
                     case 206:
-                    case 304: {
-                        this._onSuccess(method, url, options, xhr);
-                        break;
-                    }
-                    default: {
-                        //options.error(xhr.status, xhr, null);
-                        this._onError(method, url, options, xhr);
-                        break;
-                    }
+                    case 304:
+                        {
+                            this._onSuccess(method, url, options, xhr);
+                            break;
+                        }
+                    default:
+                        {
+                            //options.error(xhr.status, xhr, null);
+                            this._onError(method, url, options, xhr);
+                            break;
+                        }
                 }
             }
         },
 
-        _onSuccess: function (method, url, options, xhr) {
+        _onSuccess: function(method, url, options, xhr) {
             var response;
             var header;
             var contentType;
@@ -366,7 +363,7 @@ pc.extend(pc, function () {
                 // Split up header into content type and parameter
                 parts = header.split(";");
                 contentType = parts[0].trim();
-                if(parts[1]) {
+                if (parts[1]) {
                     parameter = parts[1].trim();
                 }
             }
@@ -391,12 +388,12 @@ pc.extend(pc, function () {
                 }
             }
 
-            options.callback(null, response);//, xhr.status, xhr);
+            options.callback(null, response); //, xhr.status, xhr);
             // options.success(response, xhr.status, xhr);
         },
 
-        _onError: function (method, url, options, xhr) {
-            options.callback(xhr.status, null);//, xhr.status, xhr);
+        _onError: function(method, url, options, xhr) {
+            options.callback(xhr.status, null); //, xhr.status, xhr);
             // options.error(xhr.status, xhr, null);
         }
     };
