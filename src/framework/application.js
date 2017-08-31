@@ -47,10 +47,10 @@ pc.extend(pc, function() {
      */
 
     /**
-     * @name pc.Application#systems
-     * @type {pc.ComponentSystem[]}
-     * @description The component systems.
-     */
+    * @name pc.Application#systems
+    * @type {pc.ComponentSystemRegistry}
+    * @description The component systems.
+    */
 
     /**
      * @name pc.Application#loader
@@ -89,10 +89,16 @@ pc.extend(pc, function() {
      */
 
     /**
-     * @name pc.Application#scripts
-     * @type pc.ScriptRegistry
-     * @description The Script Registry of the Application
-     */
+    * @name pc.Application#elementInput
+    * @type {pc.ElementInput}
+    * @description Used to handle input for {@link pc.ElementComponent}s.
+    */
+
+    /**
+    * @name pc.Application#scripts
+    * @type pc.ScriptRegistry
+    * @description The Script Registry of the Application
+    */
 
     /**
      * @name pc.Application#autoRender
