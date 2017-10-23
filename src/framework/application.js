@@ -284,10 +284,10 @@ pc.extend(pc, function() {
             var self = this;
             this.customLoader.assets.get(url, "text").then(function(response) {
                 var result = JSON.parse(response);
-                var props = result["application_properties"];
-                var assets = result["assets"];
-                var scripts = result["scripts"];
-                var priorityScripts = result["priority_scripts"];
+                var props = response.application_properties;
+                var assets = response.assets;
+                var scripts = response.scripts;
+                var priorityScripts = response.priority_scripts;
                 self._parseApplicationProperties(props, function(err) {
                     self._onVrChange(props.vr);
                     self._parseAssets(assets);
@@ -630,17 +630,18 @@ pc.extend(pc, function() {
         },
 
         // insert assets into registry
-        _parseAssets: function(assets) {
-            var scripts = [];
-            var list = [];
+        _parseAssets: function (assets) {
+            var i, id;
+            var scripts = [ ];
+            var list = [ ];
 
             var scriptsIndex = {};
 
             if (!pc.script.legacy) {
                 // add scripts in order of loading first
-                for (var i = 0; i < this.scriptsOrder.length; i++) {
-                    var id = this.scriptsOrder[i];
-                    if (!assets[id])
+                for (i = 0; i < this.scriptsOrder.length; i++) {
+                    id = this.scriptsOrder[i];
+                    if (! assets[id])
                         continue;
 
                     scriptsIndex[id] = true;
@@ -648,18 +649,18 @@ pc.extend(pc, function() {
                 }
 
                 // then add rest of assets
-                for (var id in assets) {
+                for (id in assets) {
                     if (scriptsIndex[id])
                         continue;
 
                     list.push(assets[id]);
                 }
             } else {
-                for (var id in assets)
+                for (id in assets)
                     list.push(assets[id]);
             }
 
-            for (var i = 0; i < list.length; i++) {
+            for (i = 0; i < list.length; i++) {
                 var data = list[i];
                 var asset = new pc.Asset(data.name, data.type, data.file, data.data);
                 asset.id = parseInt(data.id);
@@ -1340,7 +1341,7 @@ pc.extend(pc, function() {
             if (app.vr && app.vr.display && app.vr.display.presenting) {
                 app.vr.display.submitFrame();
             }
-        }
+        };
     };
     // static data
     var _frameEndData = {};

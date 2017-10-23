@@ -54,7 +54,7 @@ pc.extend(pc, function () {
     function _isIE() {
         var ua = window.navigator.userAgent;
         var msie = ua.indexOf("MSIE ");
-        var trident = navigator.userAgent.match(/Trident.*rv\:11\./);
+        var trident = navigator.userAgent.match(/Trident.*rv:11\./);
 
         return (msie > 0 || !!trident);
     }
@@ -219,7 +219,7 @@ pc.extend(pc, function () {
             throw new pc.UnsupportedBrowserError();
 
         // Retrieve the WebGL context
-        if (canvas)
+        if (canvas) {
             var preferWebGl2 = (options && options.preferWebGl2 !== undefined) ? options.preferWebGl2 : true;
 
             var names = preferWebGl2 ? ["webgl2", "experimental-webgl2", "webgl", "experimental-webgl"] :
@@ -238,13 +238,14 @@ pc.extend(pc, function () {
                 }
             }
             this.gl = context;
+        }
 
         if (!this.gl)
             throw new pc.ContextCreationError();
 
         var gl = this.gl;
 
-        // put the rest of the contructor in a function
+        // put the rest of the constructor in a function
         // so that the constructor remains small. Small constructors
         // are optimized by Firefox due to type inference
         (function() {
@@ -2010,7 +2011,7 @@ pc.extend(pc, function () {
             }
         },
 
-         /**
+        /**
          * @function
          * @name pc.GraphicsDevice#setDepthFunc
          * @description Configures the depth test.
