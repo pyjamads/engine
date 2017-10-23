@@ -284,10 +284,10 @@ pc.extend(pc, function() {
             var self = this;
             this.customLoader.assets.get(url, "text").then(function(response) {
                 var result = JSON.parse(response);
-                var props = response.application_properties;
-                var assets = response.assets;
-                var scripts = response.scripts;
-                var priorityScripts = response.priority_scripts;
+                var props = result.application_properties;
+                var assets = result.assets;
+                var scripts = result.scripts;
+                var priorityScripts = result.priority_scripts;
                 self._parseApplicationProperties(props, function(err) {
                     self._onVrChange(props.vr);
                     self._parseAssets(assets);
@@ -1380,4 +1380,4 @@ pc.extend(pc, function() {
 
         Application: Application
     };
-}());
+}());

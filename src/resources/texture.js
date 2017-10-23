@@ -82,23 +82,19 @@ pc.extend(pc, function() {
                     url = urlWithoutParams;
 
                     var image = new Image();
-
-                    // Call success callback after opening Texture
-                    image.onload = function () {
+                    var actual = url.split("?")[0];
+                    console.log("requesting: " + actual);
+                    pc.Application.getApplication().customLoader.assets.get(actual).then(function(response) {
+                        image.src = response;
                         callback(null, image);
-                    };
-
-                    // Call error callback with details.
-                    image.onerror = function (event) {
+                    }).catch(function(err) {
                         callback(pc.string.format("Error loading Texture from: '{0}'", url));
-                    };
-
-                    image.src = url;
+                    });
                 } else {
                     // Unsupported texture extension
                     // Use timeout because asset events can be hooked up after load gets called in some
                     // cases. For example, material loads a texture on 'add' event.
-                    setTimeout(function () {
+                    setTimeout(function() {
                         callback(pc.string.format("Error loading Texture: format not supported: '{0}'", ext));
                     }, 0);
                 }
@@ -303,7 +299,7 @@ pc.extend(pc, function() {
                 texture.anisotropy = asset.data.anisotropy;
 
             if (asset.data.hasOwnProperty('rgbm') && texture.rgbm !== !!asset.data.rgbm)
-                texture.rgbm = !! asset.data.rgbm;
+                texture.rgbm = !!asset.data.rgbm;
         }
     };
 
