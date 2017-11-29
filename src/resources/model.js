@@ -1,12 +1,17 @@
-pc.extend(pc, function() {
+pc.extend(pc, function () {
     /**
      * @name pc.ModelHandler
      * @class Resource Handler for creating pc.Model resources
      * @description {@link pc.ResourceHandler} use to load 3D model resources
      * @param {pc.GraphicsDevice} device The graphics device that will be rendering
      */
-    var ModelHandler = function(device) {
+    var ModelHandler = function (device) {
         this._device = device;
+        this._parsers = [];
+
+        this.addParser(new pc.JsonModelParser(this._device), function (url, data) {
+            return (pc.path.getExtension(url) === '.json');
+        });
     };
 
     ModelHandler.DEFAULT_MATERIAL = pc.Scene.defaultMaterial;
@@ -17,7 +22,7 @@ pc.extend(pc, function() {
          * @name pc.ModelHandler#load
          * @description Fetch model data from a remote url
          */
-        load: function(url, callback) {
+		load: function(url, callback) {
             var actual = url.split("?")[0];
             console.log("requesting: " + actual);
             pc.Application.getApplication().customLoader.assets.get(actual, "text").then(function(response) {
@@ -29,35 +34,34 @@ pc.extend(pc, function() {
                     callback(pc.string.format("Error loading model: {0} [{1}]", url, err));
                 }
             });
+
         },
 
-        /**
+         /**
          * @function
          * @name pc.ModelHandler#open
          * @description Process data in deserialized format into a pc.Model object
          * @param {Object} data The data from model file deserialized into a JavaScript Object
          */
-        open: function(url, data) {
-            if (!data.model)
-                return;
+        open: function (url, data) {
+            for (var i = 0; i < this._parsers.length; i++) {
+                var p = this._parsers[i];
 
-            if (data.model.version <= 1) {
-                logERROR(pc.string.format("Asset: {0}, is an old model format. Upload source assets to re-import.", url));
-            } else if (data.model.version >= 2) {
-                var parser = new pc.JsonModelParser(this._device);
-                return parser.parse(data);
+                if (p.decider(url, data)) {
+                    return p.parser.parse(data);
+                }
             }
-
+            logWARNING(pc.string.format("No model parser found for: {0}", url));
             return null;
         },
 
-        patch: function(asset, assets) {
-            if (!asset.resource)
+        patch: function (asset, assets) {
+            if (! asset.resource)
                 return;
 
             var data = asset.data;
 
-            asset.resource.meshInstances.forEach(function(meshInstance, i) {
+            asset.resource.meshInstances.forEach(function (meshInstance, i) {
                 if (data.mapping) {
                     var handleMaterial = function(asset) {
                         if (asset.resource) {
@@ -73,7 +77,7 @@ pc.extend(pc, function() {
                         });
                     };
 
-                    if (!data.mapping[i]) {
+                    if (! data.mapping[i]) {
                         meshInstance.material = pc.ModelHandler.DEFAULT_MATERIAL;
                         return;
                     }
@@ -83,7 +87,7 @@ pc.extend(pc, function() {
                     var material;
 
                     if (id !== undefined) { // id mapping
-                        if (!id) {
+                        if (! id) {
                             meshInstance.material = pc.ModelHandler.DEFAULT_MATERIAL;
                         } else {
                             material = assets.get(id);
@@ -109,6 +113,23 @@ pc.extend(pc, function() {
                 }
             });
         },
+
+        /**
+         * @function
+         * @name pc.ModelHandler#addParser
+         * @description Add a parser that converts raw data into a {@link pc.Model}
+         * Default parser is for JSON models
+         * @param {Object} parser See JsonModelParser for example
+         * @param {Function} decider Function that decides on which parser to use. 
+         * Function should take (url, data) arguments and return true if this parser should be used to parse the data into a {@link pc.Model}.
+         * The first parser to return true is used.
+         */
+        addParser: function (parser, decider) {
+            this._parsers.push({
+                parser: parser,
+                decider: decider
+            });
+        }
     };
 
     return {

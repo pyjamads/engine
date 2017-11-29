@@ -46,6 +46,7 @@ pc.extend(pc, function() {
     TextureHandler.prototype = {
         load: function(url, callback) {
             var self = this;
+            var image;
 
             var urlWithoutParams = url.indexOf('?') >= 0 ? url.split('?')[0] : url;
 
@@ -298,8 +299,9 @@ pc.extend(pc, function() {
             if (asset.data.hasOwnProperty('anisotropy') && texture.anisotropy !== asset.data.anisotropy)
                 texture.anisotropy = asset.data.anisotropy;
 
-            if (asset.data.hasOwnProperty('rgbm') && texture.rgbm !== !!asset.data.rgbm)
-                texture.rgbm = !!asset.data.rgbm;
+            var rgbm = !!asset.data.rgbm;
+            if (asset.data.hasOwnProperty('rgbm') && texture.rgbm !== rgbm)
+                texture.rgbm = rgbm;
         }
     };
 
