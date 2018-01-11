@@ -95,6 +95,11 @@ pc.extend(pc, function() {
 
             var actual = url.split("?")[0];
             console.log("requesting: " + actual);
+            // pc.Application.getApplication().customLoader.assets.get(actual, "arrayBuffer").then(function(response) {
+            //     manager.context.decodeAudioData(response, success, error);
+            // }).catch(function(err) {
+            //     error(err);
+            // });
             pc.Application.getApplication().customLoader.assets.get(actual, "blob").then(function(response) {
                 var reader = new FileReader();
                 reader.readAsArrayBuffer(response);
@@ -137,30 +142,36 @@ pc.extend(pc, function() {
                 document.body.appendChild(audio);
             }
 
-            var onReady = function() {
-                audio.removeEventListener('canplaythrough', onReady);
+            var actual = url.split("?")[0];
+            console.log("requesting: " + actual);
+            pc.Application.getApplication().customLoader.assets.get(actual).then(function(response) {
+                var onReady = function() {
+                    audio.removeEventListener('canplaythrough', onReady);
 
-                // remove from DOM no longer necessary
-                if (ie) {
-                    document.body.removeChild(audio);
-                }
+                    // remove from DOM no longer necessary
+                    if (ie) {
+                        document.body.removeChild(audio);
+                    }
 
-                success(audio);
-            };
+                    success(audio);
+                };
 
-            audio.onerror = function() {
-                audio.onerror = null;
+                audio.onerror = function() {
+                    audio.onerror = null;
 
-                // remove from DOM no longer necessary
-                if (ie) {
-                    document.body.removeChild(audio);
-                }
+                    // remove from DOM no longer necessary
+                    if (ie) {
+                        document.body.removeChild(audio);
+                    }
 
-                error();
-            };
+                    error();
+                };
 
-            audio.addEventListener('canplaythrough', onReady);
-            audio.src = url;
+                audio.addEventListener('canplaythrough', onReady);
+                audio.src = response;
+            }).catch(function(err) {
+                error(err);
+            });
         };
     }
 
